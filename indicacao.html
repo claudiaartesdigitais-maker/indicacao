@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indicação - Aroma de Lavanda</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            padding: 20px; 
+            background-color: #f3f0f7; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 25px; 
+            box-shadow: 0 15px 35px rgba(122, 82, 179, 0.15); 
+            width: 100%; 
+            max-width: 380px; 
+            border-top: 10px solid #7a52b3; 
+        }
+        h2 { color: #5a378c; text-align: center; margin-top: 0; font-size: 24px; }
+        p { text-align: center; color: #777; font-size: 15px; margin-bottom: 25px; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; color: #444; }
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            margin-top: 8px; 
+            border: 2px solid #eee; 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            transition: border-color 0.3s;
+        }
+        input:focus { border-color: #9b6dff; outline: none; }
+        .btn-enviar { 
+            width: 100%; 
+            background: linear-gradient(135deg, #9b6dff, #7a52b3); 
+            color: white; 
+            border: none; 
+            padding: 16px; 
+            margin-top: 30px; 
+            border-radius: 12px; 
+            font-weight: bold; 
+            font-size: 17px; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(122, 82, 179, 0.3);
+        }
+        .btn-enviar:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+        .btn-enviar:active { transform: scale(0.97); }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Aroma de Lavanda</h2>
+    <p>Indique um amigo e ganhe ciclos de bônus! 🌿</p>
+    
+    <label>Seu WhatsApp (Indicador):</label>
+    <input type="tel" id="seuWhats" placeholder="(11) 99999-9999">
+    
+    <label>WhatsApp do Amigo:</label>
+    <input type="tel" id="amigoWhats" placeholder="(11) 98888-8888">
+    
+    <button class="btn-enviar" id="btnAcao" onclick="processarIndication()">GERAR INDICAÇÃO</button>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyyBgxqe1mkuhkdJHqKoo98UOhiPtA2TSIJ0WfcAQZy8k9rV6vBmV9SVgbhUm9e-GL9/exec';
+
+function limparNumero(num) {
+    return num.replace(/\D/g, '');
+}
+
+async function processarIndication() {
+    const btn = document.getElementById('btnAcao');
+    let seuNum = limparNumero(document.getElementById('seuWhats').value);
+    let amigoNum = limparNumero(document.getElementById('amigoWhats').value);
+    
+    if(seuNum.length < 10 || amigoNum.length < 10) {
+        alert("Por favor, digite os números com DDD corretamente.");
+        return;
+    }
+
+    btn.innerText = "ENVIANDO CONVITE...";
+    btn.disabled = true;
+
+    // 1. Envia os dados para a Planilha do Google (silenciosamente)
+    try {
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ indicador: seuNum, amigo: amigoNum })
+        });
+    } catch (e) { 
+        console.error("Erro ao salvar na planilha", e); 
+    }
+
+    // 2. Abre o WhatsApp com a nova frase solicitada
+    const mensagem = `Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!`;
+    
+    const urlWhats = `https://api.whatsapp.com/send?phone=55${amigoNum}&text=${encodeURIComponent(mensagem)}`;
+    
+    // Pequeno delay para garantir que o navegador processe o envio dos dados antes de sair
+    setTimeout(() => {
+        window.location.href = urlWhats;
+    }, 500);
+}
+</script>
+
+</body>
+</html>

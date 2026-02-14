@@ -55,7 +55,7 @@
             padding: 14px;
             border: 2px solid #eee;
             border-radius: 10px;
-            font-size: 16px; /* Evita zoom no iPhone */
+            font-size: 16px; 
             box-sizing: border-box;
             transition: border-color 0.3s;
             outline: none;
@@ -76,12 +76,10 @@
             font-weight: bold;
             cursor: pointer;
             margin-top: 10px;
-            transition: transform 0.2s, background-color 0.2s;
         }
 
-        button:active {
-            transform: scale(0.98);
-            background-color: #4a148c;
+        button:disabled {
+            background-color: #ccc;
         }
 
         .footer {
@@ -123,6 +121,7 @@
 <script>
     function enviarDados() {
         const btn = document.getElementById('btnEnviar');
+        // COLOQUE O SEU LINK DO GOOGLE SCRIPT AQUI ABAIXO:
         const scriptURL = "https://script.google.com/macros/s/AKfycbzla7MIC_29nFMnEtCUazMCo93yqcnJFoFz3rzqXyKNhUyi4VFamh6x4AUZ5ip4j3sU/exec";
 
         const dados = {
@@ -137,9 +136,8 @@
         }
 
         btn.disabled = true;
-        btn.innerText = "CARREGANDO...";
+        btn.innerText = "REGISTRANDO...";
 
-        // Enviar para o Google Sheets via POST
         fetch(scriptURL, {
             method: 'POST',
             mode: 'no-cors',
@@ -147,16 +145,18 @@
             body: JSON.stringify(dados)
         })
         .then(() => {
-            alert("Indicação registrada! Agora envie o convite no WhatsApp.");
+            // Mensagem personalizada conforme solicitado
+            const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
             
-            const mensagem = "Olá " + dados.nomeAmigo + "! Estou te indicando a Lavanderia Aroma de Lavanda. Se você fizer um ciclo de lavar ou secar, eu ganho um desconto! Use este link: https://lavanderiaaromadelavanda-indiqueamigos.smallbio.com.br";
-            const linkWhatsapp = "https://api.whatsapp.com/send?phone=55" + dados.whatsAmigo.replace(/\D/g, '') + "&text=" + encodeURIComponent(mensagem);
+            // Limpa o número e monta o link
+            const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
+            const linkWhatsapp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
             
-            window.location.href = linkWhatsapp; // Abre o WhatsApp na mesma aba (melhor para celular)
+            // Redireciona para o WhatsApp
+            window.location.href = linkWhatsapp;
         })
         .catch(error => {
-            console.error('Erro:', error);
-            alert("Houve um erro. Tente novamente.");
+            alert("Erro ao conectar. Verifique sua internet.");
             btn.disabled = false;
             btn.innerText = "ENVIAR INDICAÇÃO ✨";
         });

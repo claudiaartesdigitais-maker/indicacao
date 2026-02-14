@@ -5,124 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Indique um Amigo - Aroma de Lavanda</title>
     <style>
-        :root {
-            --primary-color: #6a1b9a;
-            --bg-color: #f5f5f7;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px;
-            margin: 0;
-            min-height: 100vh;
-        }
-
-        .container {
-            background-color: #ffffff;
-            width: 100%;
-            max-width: 400px;
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            box-sizing: border-box;
-        }
-
-        h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 24px;
-        }
-
-        .input-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #444;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            font-size: 16px; 
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: var(--primary-color);
-        }
-
-        button {
-            width: 100%;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:disabled {
-            background-color: #ccc;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: #888;
-        }
+        :root { --primary-color: #6a1b9a; --bg-color: #f5f5f7; }
+        body { font-family: sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h2 { color: var(--primary-color); text-align: center; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; background: var(--primary-color); color: white; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:disabled { background: #ccc; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Aroma de Lavanda 🧺</h2>
-    <p style="text-align:center; color:#666; font-size:14px; margin-bottom:20px;">Indique um amigo e ganhe descontos!</p>
-    
+    <p style="text-align:center; color:#666; font-size:14px;">Indique um amigo e ganhe descontos!</p>
     <form id="formIndicacao">
         <div class="input-group">
-            <label for="seuWhatsapp">Seu WhatsApp com DDD:</label>
+            <label>Seu WhatsApp:</label>
             <input type="tel" id="seuWhatsapp" placeholder="Ex: 11999999999" required>
         </div>
-
         <div class="input-group">
-            <label for="nomeAmigo">Nome do Amigo:</label>
-            <input type="text" id="nomeAmigo" placeholder="Nome de quem vai indicar" required>
+            <label>Nome do Amigo:</label>
+            <input type="text" id="nomeAmigo" placeholder="Nome do amigo" required>
         </div>
-
         <div class="input-group">
-            <label for="whatsAmigo">WhatsApp do Amigo:</label>
+            <label>WhatsApp do Amigo:</label>
             <input type="tel" id="whatsAmigo" placeholder="Ex: 11988888888" required>
         </div>
-
-        <button type="button" id="btnEnviar" onclick="enviarDados()">ENVIAR INDICAÇÃO ✨</button>
+        <button type="button" id="btnEnviar" onclick="enviar()">ENVIAR INDICAÇÃO ✨</button>
     </form>
-    
-    <div class="footer">© 2026 Lavanderia Aroma de Lavanda</div>
 </div>
 
 <script>
-    function enviarDados() {
+    function enviar() {
         const btn = document.getElementById('btnEnviar');
-        // COLOQUE O SEU LINK DO GOOGLE SCRIPT AQUI ABAIXO:
-        const scriptURL = "https://script.google.com/macros/s/AKfycbzla7MIC_29nFMnEtCUazMCo93yqcnJFoFz3rzqXyKNhUyi4VFamh6x4AUZ5ip4j3sU/exec";
+        const url = "https://script.google.com/macros/s/AKfycbz0mk-6j3MSnecBvTfsNRS5qp29EFN1Jw8B6cWTDnOj1WqD6OGVekLUGdXOOkDS2HBO/exec";
 
         const dados = {
             seuWhatsapp: document.getElementById('seuWhatsapp').value,
@@ -131,37 +50,31 @@
         };
 
         if (!dados.seuWhatsapp || !dados.nomeAmigo || !dados.whatsAmigo) {
-            alert("Por favor, preencha todos os campos!");
+            alert("Preencha todos os campos!");
             return;
         }
 
         btn.disabled = true;
-        btn.innerText = "REGISTRANDO...";
+        btn.innerText = "SALVANDO...";
 
-        fetch(scriptURL, {
+        fetch(url, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dados)
         })
         .then(() => {
-            // Mensagem personalizada conforme solicitado
             const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
+            const linkWp = "https://api.whatsapp.com/send?phone=55" + dados.whatsAmigo.replace(/\D/g, '') + "&text=" + encodeURIComponent(mensagem);
             
-            // Limpa o número e monta o link
-            const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
-            const linkWhatsapp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
-            
-            // Redireciona para o WhatsApp
-            window.location.href = linkWhatsapp;
+            alert("Indicação salva com sucesso!");
+            window.location.href = linkWp;
         })
-        .catch(error => {
-            alert("Erro ao conectar. Verifique sua internet.");
+        .catch(() => {
+            alert("Erro ao salvar.");
             btn.disabled = false;
-            btn.innerText = "ENVIAR INDICAÇÃO ✨";
         });
     }
 </script>
-
 </body>
 </html>

@@ -72,48 +72,48 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyyBgxqe1mkuhkdJHqKoo98UOhiPtA2TSIJ0WfcAQZy8k9rV6vBmV9SVgbhUm9e-GL9/exec';
+  function submitForm() {
+    const btn = document.querySelector('button');
+    const formData = {
+      seuWhatsapp: document.getElementById('seuWhatsapp').value,
+      nomeAmigo: document.getElementById('nomeAmigo').value,
+      whatsAmigo: document.getElementById('whatsAmigo').value
+    };
 
-function limparNumero(num) {
-    return num.replace(/\D/g, '');
-}
-
-async function processarIndication() {
-    const btn = document.getElementById('btnAcao');
-    let seuNum = limparNumero(document.getElementById('seuWhats').value);
-    let amigoNum = limparNumero(document.getElementById('amigoWhats').value);
-    
-    if(seuNum.length < 10 || amigoNum.length < 10) {
-        alert("Por favor, digite os números com DDD corretamente.");
-        return;
+    if(!formData.seuWhatsapp || !formData.nomeAmigo || !formData.whatsAmigo) {
+      alert("Por favor, preencha todos os campos.");
+      return;
     }
 
-    btn.innerText = "ENVIANDO CONVITE...";
     btn.disabled = true;
+    btn.innerText = "A ENVIAR...";
 
-    // 1. Envia os dados para a Planilha do Google (silenciosamente)
-    try {
-        await fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors', 
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ indicador: seuNum, amigo: amigoNum })
-        });
-    } catch (e) { 
-        console.error("Erro ao salvar na planilha", e); 
-    }
+    // ESTA É A PARTE QUE FAZ A PONTE COM O GOOGLE
+    const urlScript = "https://script.google.com/macros/s/AKfycbzla7MIC_29nFMnEtCUazMCo93yqcnJFoFz3rzqXyKNhUyi4VFamh6x4AUZ5ip4j3sU/exec";
 
-    // 2. Abre o WhatsApp com a nova frase solicitada
-    const mensagem = `Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!`;
-    
-    const urlWhats = `https://api.whatsapp.com/send?phone=55${amigoNum}&text=${encodeURIComponent(mensagem)}`;
-    
-    // Pequeno delay para garantir que o navegador processe o envio dos dados antes de sair
-    setTimeout(() => {
-        window.location.href = urlWhats;
-    }, 500);
-}
+    fetch(urlScript, {
+      method: 'POST',
+      mode: 'no-cors',
+      cache: 'no-cache',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    }).then(() => {
+      const msg = "Olá " + formData.nomeAmigo + "! Estou a indicar-te a Lavandaria Aroma de Lavanda. Se fizeres um ciclo de lavar ou secar, eu ganho um desconto! Use este link: https://lavanderiaaromadelavanda-indiqueamigos.smallbio.com.br";
+      const wpUrl = "https://api.whatsapp.com/send?phone=55" + formData.whatsAmigo.replace(/\D/g,'') + "&text=" + encodeURIComponent(msg);
+      
+      alert("Indicação registada com sucesso!");
+      window.open(wpUrl, '_blank');
+      
+      btn.disabled = false;
+      btn.innerText = "ENVIAR CONVITE ✨";
+      document.getElementById('referralForm').reset();
+    }).catch(err => {
+      alert("Erro ao enviar. Tente novamente.");
+      btn.disabled = false;
+    });
+  }
 </script>
 
 </body>
+
 </html>

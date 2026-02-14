@@ -59,35 +59,44 @@
         }
 
         btn.disabled = true;
-        btn.innerText = "VERIFICANDO..."; 
+        btn.innerText = "VERIFICANDO...";
 
         try {
+            // Enviando para o Google Script
             const response = await fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(dados)
             });
-            
-            const texto = await response.text();
 
-            if (texto === "EXISTE") {
-                alert("Atenção! Este número já consta como cliente na Lavanderia Aroma de Lavanda e não pode ser indicado.");
+            const resultado = await response.text();
+
+            // Se o Google Script responder que o número existe na Coluna K
+            if (resultado.includes("EXISTE")) {
+                alert("Atenção! Este número já consta como cliente na Lavanderia Aroma de Lavanda e não pode ser indicado novamente.");
                 btn.disabled = false;
                 btn.innerText = "ENVIAR INDICAÇÃO ✨";
             } else {
                 btn.innerText = "SALVANDO...";
+                
+                // Aguarda 1 segundo para o cliente ver que deu certo
                 setTimeout(() => {
                     const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
                     const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
                     const linkWp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
                     
+                    // Reseta o formulário e o botão
                     form.reset();
                     btn.disabled = false;
                     btn.innerText = "ENVIAR INDICAÇÃO ✨";
+
+                    // Abre o WhatsApp
                     window.location.href = linkWp;
                 }, 1000);
             }
         } catch (error) {
-            alert("Erro na conexão. Tente novamente.");
+            // Em caso de erro técnico ou bloqueio de resposta (CORS), 
+            // avisamos o usuário mas não travamos o processo se não for necessário.
+            alert("Erro ao verificar indicação. Tente novamente.");
             btn.disabled = false;
             btn.innerText = "ENVIAR INDICAÇÃO ✨";
         }
@@ -95,6 +104,3 @@
 </script>
 </body>
 </html>
-
-
-

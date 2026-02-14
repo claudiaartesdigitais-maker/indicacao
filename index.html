@@ -59,7 +59,7 @@
         }
 
         btn.disabled = true;
-        btn.innerText = "ENVIANDO...";
+        btn.innerText = "SALVANDO..."; // Feedback visual imediato
 
         fetch(url, {
             method: 'POST',
@@ -68,19 +68,20 @@
             body: JSON.stringify(dados)
         })
         .then(() => {
-            const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
-            const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
-            const linkWp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
-            
-            // --- O SEGREDO ESTÁ AQUI ---
-            // Primeiro limpamos tudo
-            form.reset();
-            btn.disabled = false;
-            btn.innerText = "ENVIAR INDICAÇÃO ✨";
+            // Espera 1 segundo para o cliente ver que foi salvo
+            setTimeout(() => {
+                const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
+                const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
+                const linkWp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
+                
+                // Limpa o formulário ANTES de sair da página
+                form.reset();
+                btn.disabled = false;
+                btn.innerText = "ENVIAR INDICAÇÃO ✨";
 
-            // E logo em seguida mandamos para o WhatsApp
-            // Assim, ao "voltar", a página já está zerada
-            window.location.href = linkWp;
+                // Agora sim, pula para o WhatsApp
+                window.location.href = linkWp;
+            }, 1000); // 1000 milissegundos = 1 segundo
         })
         .catch(() => {
             alert("Erro na conexão. Tente novamente.");
@@ -91,4 +92,5 @@
 </script>
 </body>
 </html>
+
 

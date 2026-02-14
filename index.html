@@ -8,19 +8,21 @@
         :root { --primary-color: #6a1b9a; --bg-color: #f5f5f7; }
         body { font-family: sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 20px; margin: 0; }
         .container { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h2 { color: var(--primary-color); text-align: center; }
+        h2 { color: var(--primary-color); text-align: center; margin-top: 0; }
         .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
-        input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; background: var(--primary-color); color: white; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        button:disabled { background: #ccc; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #444; }
+        input { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; box-sizing: border-box; outline: none; transition: border-color 0.3s; }
+        input:focus { border-color: var(--primary-color); }
+        button { width: 100%; background: var(--primary-color); color: white; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: opacity 0.3s; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .footer { text-align: center; margin-top: 20px; font-size: 11px; color: #aaa; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Aroma de Lavanda 🧺</h2>
-    <p style="text-align:center; color:#666; font-size:14px;">Indique um amigo e ganhe descontos!</p>
+    <p style="text-align:center; color:#666; font-size:14px; margin-bottom:20px;">Indique um amigo e ganhe descontos!</p>
     <form id="formIndicacao">
         <div class="input-group">
             <label>Seu WhatsApp:</label>
@@ -36,6 +38,7 @@
         </div>
         <button type="button" id="btnEnviar" onclick="enviar()">ENVIAR INDICAÇÃO ✨</button>
     </form>
+    <div class="footer">© 2026 Aroma de Lavanda</div>
 </div>
 
 <script>
@@ -50,13 +53,15 @@
         };
 
         if (!dados.seuWhatsapp || !dados.nomeAmigo || !dados.whatsAmigo) {
-            alert("Preencha todos os campos!");
+            alert("Por favor, preencha todos os campos.");
             return;
         }
 
+        // Desativa o botão para evitar cliques duplos
         btn.disabled = true;
-        btn.innerText = "SALVANDO...";
+        btn.innerText = "ENVIANDO...";
 
+        // Envia para a planilha (sem exibir alertas de sucesso)
         fetch(url, {
             method: 'POST',
             mode: 'no-cors',
@@ -64,15 +69,18 @@
             body: JSON.stringify(dados)
         })
         .then(() => {
+            // Mensagem direta sem "Link" ou "Alertas"
             const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
-            const linkWp = "https://api.whatsapp.com/send?phone=55" + dados.whatsAmigo.replace(/\D/g, '') + "&text=" + encodeURIComponent(mensagem);
+            const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
+            const linkWp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
             
-            alert("Indicação salva com sucesso!");
+            // Vai direto para o WhatsApp
             window.location.href = linkWp;
         })
         .catch(() => {
-            alert("Erro ao salvar.");
+            alert("Erro na conexão. Tente novamente.");
             btn.disabled = false;
+            btn.innerText = "ENVIAR INDICAÇÃO ✨";
         });
     }
 </script>

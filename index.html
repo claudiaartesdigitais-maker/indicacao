@@ -14,7 +14,7 @@
         input { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; box-sizing: border-box; outline: none; }
         input:focus { border-color: var(--primary-color); }
         button { width: 100%; background: var(--primary-color); color: white; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
+        button:disabled { background: #ccc; }
         .footer { text-align: center; margin-top: 20px; font-size: 11px; color: #aaa; }
     </style>
 </head>
@@ -42,7 +42,7 @@
 </div>
 
 <script>
-    async function enviar() {
+    function enviar() {
         const btn = document.getElementById('btnEnviar');
         const form = document.getElementById('formIndicacao');
         const url = "https://script.google.com/macros/s/AKfycbz0mk-6j3MSnecBvTfsNRS5qp29EFN1Jw8B6cWTDnOj1WqD6OGVekLUGdXOOkDS2HBO/exec";
@@ -59,48 +59,30 @@
         }
 
         btn.disabled = true;
-        btn.innerText = "VERIFICANDO...";
+        btn.innerText = "SALVANDO...";
 
-        try {
-            // Enviando para o Google Script
-            const response = await fetch(url, {
-                method: 'POST',
-                body: JSON.stringify(dados)
-            });
-
-            const resultado = await response.text();
-
-            // Se o Google Script responder que o número existe na Coluna K
-            if (resultado.includes("EXISTE")) {
-                alert("Atenção! Este número já consta como cliente na Lavanderia Aroma de Lavanda e não pode ser indicado novamente.");
+        fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(dados)
+        }).then(() => {
+            setTimeout(() => {
+                const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
+                const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
+                const linkWp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
+                
+                form.reset();
                 btn.disabled = false;
                 btn.innerText = "ENVIAR INDICAÇÃO ✨";
-            } else {
-                btn.innerText = "SALVANDO...";
-                
-                // Aguarda 1 segundo para o cliente ver que deu certo
-                setTimeout(() => {
-                    const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
-                    const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
-                    const linkWp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
-                    
-                    // Reseta o formulário e o botão
-                    form.reset();
-                    btn.disabled = false;
-                    btn.innerText = "ENVIAR INDICAÇÃO ✨";
-
-                    // Abre o WhatsApp
-                    window.location.href = linkWp;
-                }, 1000);
-            }
-        } catch (error) {
-            // Em caso de erro técnico ou bloqueio de resposta (CORS), 
-            // avisamos o usuário mas não travamos o processo se não for necessário.
-            alert("Erro ao verificar indicação. Tente novamente.");
+                window.location.href = linkWp;
+            }, 1000);
+        }).catch(() => {
+            alert("Erro ao enviar. Tente novamente.");
             btn.disabled = false;
             btn.innerText = "ENVIAR INDICAÇÃO ✨";
-        }
+        });
     }
 </script>
 </body>
 </html>
+

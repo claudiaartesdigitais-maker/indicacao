@@ -42,7 +42,7 @@
 </div>
 
 <script>
-    function enviar() {
+    async function enviar() {
         const btn = document.getElementById('btnEnviar');
         const form = document.getElementById('formIndicacao');
         const url = "https://script.google.com/macros/s/AKfycbz0mk-6j3MSnecBvTfsNRS5qp29EFN1Jw8B6cWTDnOj1WqD6OGVekLUGdXOOkDS2HBO/exec";
@@ -59,38 +59,42 @@
         }
 
         btn.disabled = true;
-        btn.innerText = "SALVANDO..."; // Feedback visual imediato
+        btn.innerText = "VERIFICANDO..."; 
 
-        fetch(url, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dados)
-        })
-        .then(() => {
-            // Espera 1 segundo para o cliente ver que foi salvo
-            setTimeout(() => {
-                const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
-                const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
-                const linkWp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
-                
-                // Limpa o formulário ANTES de sair da página
-                form.reset();
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(dados)
+            });
+            
+            const texto = await response.text();
+
+            if (texto === "EXISTE") {
+                alert("Atenção! Este número já consta como cliente na Lavanderia Aroma de Lavanda e não pode ser indicado.");
                 btn.disabled = false;
                 btn.innerText = "ENVIAR INDICAÇÃO ✨";
-
-                // Agora sim, pula para o WhatsApp
-                window.location.href = linkWp;
-            }, 1000); // 1000 milissegundos = 1 segundo
-        })
-        .catch(() => {
+            } else {
+                btn.innerText = "SALVANDO...";
+                setTimeout(() => {
+                    const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
+                    const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
+                    const linkWp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
+                    
+                    form.reset();
+                    btn.disabled = false;
+                    btn.innerText = "ENVIAR INDICAÇÃO ✨";
+                    window.location.href = linkWp;
+                }, 1000);
+            }
+        } catch (error) {
             alert("Erro na conexão. Tente novamente.");
             btn.disabled = false;
             btn.innerText = "ENVIAR INDICAÇÃO ✨";
-        });
+        }
     }
 </script>
 </body>
 </html>
+
 
 

@@ -72,16 +72,15 @@
             const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
             const linkWp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
             
-            // 1. Abre o WhatsApp
-            window.location.href = linkWp;
+            // --- O SEGREDO ESTÁ AQUI ---
+            // Primeiro limpamos tudo
+            form.reset();
+            btn.disabled = false;
+            btn.innerText = "ENVIAR INDICAÇÃO ✨";
 
-            // 2. Limpa o formulário e volta o botão ao normal após um pequeno delay
-            // Assim, se o cliente voltar para a aba, já está tudo limpo.
-            setTimeout(() => {
-                form.reset();
-                btn.disabled = false;
-                btn.innerText = "ENVIAR INDICAÇÃO ✨";
-            }, 1000);
+            // E logo em seguida mandamos para o WhatsApp
+            // Assim, ao "voltar", a página já está zerada
+            window.location.href = linkWp;
         })
         .catch(() => {
             alert("Erro na conexão. Tente novamente.");
@@ -92,3 +91,4 @@
 </script>
 </body>
 </html>
+

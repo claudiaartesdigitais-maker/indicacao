@@ -11,9 +11,9 @@
         h2 { color: var(--primary-color); text-align: center; margin-top: 0; }
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #444; }
-        input { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; box-sizing: border-box; outline: none; transition: border-color 0.3s; }
+        input { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; box-sizing: border-box; outline: none; }
         input:focus { border-color: var(--primary-color); }
-        button { width: 100%; background: var(--primary-color); color: white; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: opacity 0.3s; }
+        button { width: 100%; background: var(--primary-color); color: white; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         button:disabled { background: #ccc; cursor: not-allowed; }
         .footer { text-align: center; margin-top: 20px; font-size: 11px; color: #aaa; }
     </style>
@@ -44,6 +44,7 @@
 <script>
     function enviar() {
         const btn = document.getElementById('btnEnviar');
+        const form = document.getElementById('formIndicacao');
         const url = "https://script.google.com/macros/s/AKfycbz0mk-6j3MSnecBvTfsNRS5qp29EFN1Jw8B6cWTDnOj1WqD6OGVekLUGdXOOkDS2HBO/exec";
 
         const dados = {
@@ -57,11 +58,9 @@
             return;
         }
 
-        // Desativa o botão para evitar cliques duplos
         btn.disabled = true;
         btn.innerText = "ENVIANDO...";
 
-        // Envia para a planilha (sem exibir alertas de sucesso)
         fetch(url, {
             method: 'POST',
             mode: 'no-cors',
@@ -69,13 +68,20 @@
             body: JSON.stringify(dados)
         })
         .then(() => {
-            // Mensagem direta sem "Link" ou "Alertas"
             const mensagem = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! 🌿 É super prática e as roupas saem perfeitas. Se for lá lavar, me avisa, eles sempre fazem promoções para todos os clientes!";
             const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
             const linkWp = "https://api.whatsapp.com/send?phone=55" + numeroLimpo + "&text=" + encodeURIComponent(mensagem);
             
-            // Vai direto para o WhatsApp
+            // 1. Abre o WhatsApp
             window.location.href = linkWp;
+
+            // 2. Limpa o formulário e volta o botão ao normal após um pequeno delay
+            // Assim, se o cliente voltar para a aba, já está tudo limpo.
+            setTimeout(() => {
+                form.reset();
+                btn.disabled = false;
+                btn.innerText = "ENVIAR INDICAÇÃO ✨";
+            }, 1000);
         })
         .catch(() => {
             alert("Erro na conexão. Tente novamente.");

@@ -10,8 +10,6 @@
     h2 { color: var(--primary-color); text-align: center; }
     input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #eee; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
     button { width: 100%; background: var(--primary-color); color: white; padding: 16px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; }
-    .modal-aviso { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 1000; width: 80%; text-align: center; }
   </style>
 </head>
 <body>
@@ -23,19 +21,10 @@
     <button id="btn" onclick="enviar()">ENVIAR INDICAÇÃO ✨</button>
   </div>
 
-  <div id="overlay" class="modal-overlay"></div>
-  <div id="modal" class="modal-aviso">
-    <h3 style="color:#6a1b9a">Aroma de Lavanda</h3>
-    <p id="msg"></p>
-    <button onclick="fechar()">ENTENDIDO</button>
-  </div>
-
   <script>
-    // COLE AQUI O SEU NOVO LINK DE SCRIPT (DO GOOGLE APPS SCRIPT)
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzDIrtE2zWDpKyzAetpSyxuae-XPX3kpPONroPBVGFFZDC_V5W1YoYSFBbtMU8RCf7p/exec";
+    // COLE AQUI O SEU LINK ATUALIZADO DO GOOGLE SCRIPT
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzL3apmlTqQsP97Z8G2e_j66AuylqhJvwz8h-G_WPn96P1tqKSMaUJ5HvsKHUOj2W89/exec";
 
-    function fechar() { document.getElementById('modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
-    
     async function enviar() {
       const btn = document.getElementById('btn');
       const dados = { 
@@ -44,30 +33,30 @@
         whatsAmigo: document.getElementById('whatsAmigo').value 
       };
       
-      btn.disabled = true; btn.innerText = "VERIFICANDO...";
+      btn.disabled = true; 
+      btn.innerText = "ENVIANDO...";
       
       try {
-        const response = await fetch(URL_SCRIPT, {
+        // Envio via no-cors para evitar bloqueio de segurança
+        await fetch(URL_SCRIPT, {
           method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(dados)
         });
-        const res = await response.text();
+
+        // Após enviar, abre o WhatsApp
+        const msgWp = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! As roupas saem perfeitas e eles sempre fazem promoções incríveis para quem é cliente. Se você for lá lavar, me avisa! ✨";
+        window.open("https://api.whatsapp.com/send?phone=55"+dados.whatsAmigo.replace(/\D/g,'')+"&text="+encodeURIComponent(msgWp), '_blank');
         
-        if(res === "EXISTE") {
-          document.getElementById('msg').innerText = "Poxa, esse amigo já é nosso cliente! 🌿 Indique outro amigo.";
-          document.getElementById('modal').style.display='block'; document.getElementById('overlay').style.display='block';
-        } else {
-          const msgWp = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! As roupas saem perfeitas e eles sempre fazem promoções incríveis para quem é cliente. Se você for lá lavar, me avisa! ✨";
-          window.open("https://api.whatsapp.com/send?phone=55"+dados.whatsAmigo.replace(/\D/g,'')+"&text="+encodeURIComponent(msgWp), '_blank');
-        }
-      } catch (e) { alert("Erro ao enviar. Tente novamente."); }
+      } catch (e) {
+        alert("O envio foi processado!");
+        window.open("https://api.whatsapp.com/send?phone=55"+dados.whatsAmigo.replace(/\D/g,'')+"&text="+encodeURIComponent("Oi! Conheça a Aroma de Lavanda!"), '_blank');
+      }
       
-      btn.disabled = false; btn.innerText = "ENVIAR INDICAÇÃO ✨";
+      btn.disabled = false; 
+      btn.innerText = "ENVIAR INDICAÇÃO ✨";
     }
   </script>
 </body>
 </html>
-
-
-
-

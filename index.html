@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Indique um Amigo - Aroma de Lavanda</title>
+    <title>Indique um Amigo - Lavanderia Aroma de Lavanda</title>
     <style>
         :root { --primary-color: #6a1b9a; --bg-color: #f5f5f7; }
         body { font-family: sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; padding: 20px; margin: 0; }
         .container { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); box-sizing: border-box; }
-        h2 { color: var(--primary-color); text-align: center; margin-top: 0; }
+        h2 { color: var(--primary-color); text-align: center; margin-top: 0; font-size: 22px; }
+        .instrucao { text-align: center; color: #555; font-size: 14px; margin-bottom: 20px; font-weight: 500; }
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #444; }
         input { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; box-sizing: border-box; outline: none; }
@@ -30,8 +31,9 @@
 <body>
 
 <div class="container">
-    <h2>Aroma de Lavanda 🧺</h2>
-    <p style="text-align:center; color:#666; font-size:14px; margin-bottom:20px;">Indique um amigo e ganhe descontos!</p>
+    <h2>Lavanderia Aroma de Lavanda 🧺</h2>
+    <p class="instrucao">Clique no link abaixo e faça uma indicação para ganhar descontos!</p>
+    
     <form id="formIndicacao">
         <div class="input-group">
             <label>Seu WhatsApp:</label>
@@ -111,7 +113,6 @@
                 window.location.href = linkWp;
             }
         } catch (error) {
-            // Se houver erro de conexão (CORS), ainda assim abrimos o WhatsApp para não perder a indicação
             const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
             window.location.href = "https://api.whatsapp.com/send?phone=55" + numeroLimpo;
         }
@@ -119,4 +120,3 @@
 </script>
 </body>
 </html>
-

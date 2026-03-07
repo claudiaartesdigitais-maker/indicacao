@@ -89,7 +89,7 @@
         btn.innerText = "VERIFICANDO...";
 
         try {
-            // CORREÇÃO: Transformamos os dados em parâmetros de URL para usar o método GET
+            // ÚNICA ALTERAÇÃO: Mudamos de POST para GET para o GitHub conseguir ler a resposta do Google
             const params = new URLSearchParams(dados).toString();
             const response = await fetch(`${url}?${params}`, {
                 method: 'GET'
@@ -112,7 +112,7 @@
                 window.location.href = linkWp;
             }
         } catch (error) {
-            // Caso ocorra erro de conexão, abre o WhatsApp para garantir a indicação
+            // Em caso de erro de conexão, ainda abre o WhatsApp para não perder a venda
             const numeroLimpo = dados.whatsAmigo.replace(/\D/g, '');
             window.location.href = "https://api.whatsapp.com/send?phone=55" + numeroLimpo;
         }
@@ -120,5 +120,6 @@
 </script>
 </body>
 </html>
+
 
 

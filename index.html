@@ -4,12 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    :root { --primary-color: #6a1b9a; }
     body { font-family: sans-serif; background-color: #f5f5f7; display: flex; justify-content: center; padding: 20px; }
     .container { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    h2 { color: var(--primary-color); text-align: center; }
     input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #eee; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-    button { width: 100%; background: var(--primary-color); color: white; padding: 16px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+    button { width: 100%; background: #6a1b9a; color: white; padding: 16px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -22,8 +20,8 @@
   </div>
 
   <script>
-    // COLE AQUI O SEU LINK ATUALIZADO DO GOOGLE SCRIPT
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxgE0-qzBS6ZODMDWj2v-d5G6cOEvXj0ObCZXdgH9wYA8zZ_1bKjdf8ha3w7aMT6v0t/exec";
+    // COPIE O SEU LINK DE IMPLANTAÇÃO MAIS RECENTE AQUI
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwb3D4tin2ZQDT2Qtkz8Ei9ioDfgSkOYjZMCdkPbHFXFv2TxCsBBECfXJsRz0Em3Xw/exec";
 
     async function enviar() {
       const btn = document.getElementById('btn');
@@ -33,32 +31,34 @@
         whatsAmigo: document.getElementById('whatsAmigo').value 
       };
       
-      btn.disabled = true; 
+      btn.disabled = true;
       btn.innerText = "ENVIANDO...";
       
       try {
-        // Envio via no-cors para evitar bloqueio de segurança
-        await fetch(URL_SCRIPT, {
+        const response = await fetch(URL_SCRIPT, {
           method: "POST",
-          mode: "no-cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(dados)
         });
 
-        // Após enviar, abre o WhatsApp
-        const msgWp = "Oi! Estou usando a Lavanderia Aroma de Lavanda e lembrei de você! As roupas saem perfeitas e eles sempre fazem promoções incríveis para quem é cliente. Se você for lá lavar, me avisa! ✨";
-        window.open("https://api.whatsapp.com/send?phone=55"+dados.whatsAmigo.replace(/\D/g,'')+"&text="+encodeURIComponent(msgWp), '_blank');
+        const res = await response.text();
         
+        if (res === "OK") {
+          const msgWp = "Oi! Conheça a Aroma de Lavanda!";
+          window.open("https://api.whatsapp.com/send?phone=55"+dados.whatsAmigo.replace(/\D/g,'')+"&text="+encodeURIComponent(msgWp), '_blank');
+        } else {
+          alert("Erro no servidor: " + res);
+        }
       } catch (e) {
-        alert("O envio foi processado!");
-        window.open("https://api.whatsapp.com/send?phone=55"+dados.whatsAmigo.replace(/\D/g,'')+"&text="+encodeURIComponent("Oi! Conheça a Aroma de Lavanda!"), '_blank');
+        alert("Erro de conexão. Tente novamente.");
       }
       
-      btn.disabled = false; 
+      btn.disabled = false;
       btn.innerText = "ENVIAR INDICAÇÃO ✨";
     }
   </script>
 </body>
 </html>
+
 
 

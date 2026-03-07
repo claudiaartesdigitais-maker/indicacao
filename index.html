@@ -97,7 +97,7 @@
             const resultado = await response.text();
 
             if (resultado.includes("EXISTE")) {
-                mostrarAviso("Poxa, o " + dados.nomeAmigo + " já faz parte da nossa família Aroma de Lavanda! 🌿 Que tal indicar outro amigo?");
+                mostrarAviso("Poxa, " + dados.nomeAmigo + " já faz parte da nossa família Aroma de Lavanda! 🌿 Que tal indicar outro amigo?");
                 btn.disabled = false;
                 btn.innerText = "ENVIAR INDICAÇÃO ✨";
             } else {
@@ -119,6 +119,7 @@
 </script>
 </body>
 </html>
+
 
 
 
